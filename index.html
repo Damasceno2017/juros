@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora e Simulador de Juros Compostos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        form {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: right;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Calculadora e Simulador de Juros Compostos</h1>
+
+    <!-- Calculadora de Juros Compostos -->
+    <form id="compoundInterestForm">
+        <h2>Calculadora de Juros Compostos</h2>
+        <label for="principal">Capital Inicial (R$):</label>
+        <input type="number" id="principal" name="principal" placeholder="10000" required min="0" step="0.01">
+
+        <label for="rate">Taxa de Juros (% ao mês):</label>
+        <input type="number" id="rate" name="rate" placeholder="0,93" required min="0" step="0.01">
+
+        <label for="time">Tempo (meses):</label>
+        <input type="number" id="time" name="time" placeholder="12" required min="0" step="0.01">
+
+        <label for="frequency">Frequência de Capitalização:</label>
+        <select id="frequency" name="frequency" required>
+            <option value="1">Anual</option>
+            <option value="12" selected>Mensal</option>
+            <option value="4">Trimestral</option>
+            <option value="2">Semestral</option>
+        </select>
+
+        <button type="button" onclick="calculateCompoundInterest()">Calcular</button>
+    </form>
+
+    <div class="result" id="result"></div>
+
+    <!-- Simulador de Juros Compostos -->
+    <form id="investmentForm">
+        <h2>Simulador de Investimento</h2>
+        <label for="initialValue">Valor Inicial:</label>
+        <input type="number" id="initialValue" name="initialValue" step="0.01" required><br><br>
+
+        <label for="monthlyContribution">Valor Mensal Aplicado:</label>
+        <input type="number" id="monthlyContribution" name="monthlyContribution" step="0.01" required><br><br>
+
+        <label for="interestRate">Taxa de Juros Mensal (%):</label>
+        <input type="number" id="interestRate" name="interestRate" step="0.01" required><br><br>
+
+        <label for="months">Número de Meses:</label>
+        <input type="number" id="months" name="months" required><br><br>
+
+        <button type="button" onclick="generateTable()">Gerar Tabela</button>
+    </form>
+
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th>Mês</th>
+                <th>Valor Inicial</th>
+                <th>Aplicação Mensal</th>
+                <th>Rendimento</th>
+                <th>Saldo Final</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        // Função para calcular juros compostos
+        function calculateCompoundInterest() {
+            const principal = parseFloat(document.getElementById('principal').value);
+            const rate = parseFloat(document.getElementById('rate').value) / 100;
+            const time = parseFloat(document.getElementById('time').value);
+            const frequency = parseInt(document.getElementById('frequency').value);
+
+            const amount1 = Math.pow(1 + rate, time);
+            const amount = principal * amount1;
+
+            document.getElementById('result').textContent = `O valor futuro será: R$ ${amount.toFixed(2)}`;
+        }
+
+        // Função para gerar tabela de simulação de investimento
+        function generateTable() {
+            const initialValue = parseFloat(document.getElementById('initialValue').value);
+            const monthlyContribution = parseFloat(document.getElementById('monthlyContribution').value);
+            const interestRate = parseFloat(document.getElementById('interestRate').value) / 100;
+            const months = parseInt(document.getElementById('months').value);
+
+            const tableBody = document.getElementById('resultTable').querySelector('tbody');
+            tableBody.innerHTML = '';
+
+            let currentBalance = initialValue;
+
+            for (let i = 1; i <= months; i++) {
+                const interest = currentBalance * interestRate;
+                const finalBalance = currentBalance + interest + monthlyContribution;
+
+                const row = `<tr>
+                    <td>${i}</td>
+                    <td>${currentBalance.toFixed(2)}</td>
+                    <td>${monthlyContribution.toFixed(2)}</td>
+                    <td>${interest.toFixed(2)}</td>
+                    <td>${finalBalance.toFixed(2)}</td>
+                </tr>`;
+
+                tableBody.innerHTML += row;
+                currentBalance = finalBalance;
+            }
+        }
+    </script>
+</body>
+</html>
